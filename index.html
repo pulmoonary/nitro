@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>O-Level Chemistry: Electrolysis Study Buddy</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="app-header">
+    <h1>🧪 O-Level Chemistry: Electrolysis Study Buddy</h1>
+    <p>Select an electrolytic cell block and step through the process below.</p>
+  </header>
+
+  <main class="container">
+    <!-- Block Selector (Tabs) -->
+    <nav class="block-selector">
+      <button class="block-btn active" data-block="molten">
+        1. Molten NaCl
+      </button>
+      <button class="block-btn" data-block="dilute">
+        2. Dilute Aqueous NaCl
+      </button>
+      <button class="block-btn" data-block="concentrated">
+        3. Concentrated Aqueous NaCl
+      </button>
+    </nav>
+
+    <!-- Main Study Card -->
+    <section class="study-card">
+      <h2 id="block-title">Electrolysis of Molten Sodium Chloride</h2>
+
+      <!-- Step Selector Buttons -->
+      <div class="step-nav">
+        <button class="step-btn active" data-step="1">Step 1: Ions Present</button>
+        <button class="step-btn" data-step="2">Step 2: Anode (+)</button>
+        <button class="step-btn" data-step="3">Step 3: Cathode (-)</button>
+        <button class="step-btn" data-step="4">Step 4: Overall & Observations</button>
+      </div>
+
+      <!-- Content Split View: Left (Text) | Right (Graphic/Animation) -->
+      <div class="content-split">
+        <!-- Text Box -->
+        <article class="text-panel">
+          <h3 id="step-heading">Step 1: Ions Present in Solution</h3>
+          <div id="step-content" class="text-body">
+            <!-- Text dynamically inserted via JS -->
+          </div>
+        </article>
+
+        <!-- Graphic / Animation Area -->
+        <div class="graphic-panel">
+          <div class="animation-container" id="animation-box">
+            <!-- Animation graphics dynamic container -->
+            <div class="beaker">
+              <div class="electrode anode" id="anode-label">Anode (+)</div>
+              <div class="electrode cathode" id="cathode-label">Cathode (-)</div>
+              <div class="electrolyte-liquid" id="liquid">
+                <!-- Ion particles will be animated here -->
+                <div class="ion cation" id="cation-particle">Na⁺</div>
+                <div class="ion anion" id="anion-particle">Cl⁻</div>
+              </div>
+            </div>
+            <p class="graphic-caption" id="animation-caption">
+              [Animation Placeholder: Ions in electrolyte]
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
