@@ -54,7 +54,7 @@
   /* ---------- Block tabs ---------- */
   .block-tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
   .block-tab{
-    display:flex;align-items:center;gap:10px;
+    display:flex;align-items:center;
     background:var(--panel);border:1px solid var(--panel-border);
     border-radius:10px;padding:10px 16px;
     font-family:var(--font-body);font-size:.92rem;font-weight:600;color:var(--muted);
@@ -65,7 +65,6 @@
     color:var(--ink);border-color:var(--ink);
     background:linear-gradient(90deg,var(--anode-tint),var(--cathode-tint));
   }
-  .block-tab svg{display:block;}
 
   .scenario-meta{color:var(--muted);font-size:.95rem;margin:0 0 26px;}
   .scenario-meta strong{color:var(--ink);font-weight:600;}
@@ -142,14 +141,6 @@
   .nav-btn:hover{opacity:.88;}
   .nav-btn:active{transform:translateY(1px);}
   .nav-btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--panel-border);}
-
-  .progress-dots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;}
-  .progress-dots button{
-    width:9px;height:9px;border-radius:50%;border:none;padding:0;cursor:pointer;
-    background:var(--panel-border);
-  }
-  .progress-dots button.active{background:var(--ink);}
-  .progress-dots span.gap{width:10px;}
 
   footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--panel-border);
     color:var(--muted);font-size:.85rem;}
@@ -250,7 +241,6 @@
 
   <div class="step-nav">
     <button class="nav-btn ghost" id="prevBtn">← Previous</button>
-    <div class="progress-dots" id="progressDots"></div>
     <button class="nav-btn" id="nextBtn">Next →</button>
   </div>
 
@@ -261,13 +251,12 @@
 
 <script>
 /* ============================= DATA ============================= */
-// Modify the text content in BLOCKS below to update your study buddy page!
 const BLOCKS = [
   {
     id: 'molten',
     shortName: 'Block 1 Title',
     formula: '[Formula 1]',
-    state: 'molten', // 'molten' shows heat flames; 'aqueous' shows liquid level
+    state: 'molten',
     intro: '[Placeholder: Brief intro description for Block 1]',
     steps: [
       {
@@ -547,25 +536,13 @@ function diagramSVG(block, stepIdx){
 /* ============================= UI BUILD ============================= */
 const blockTabsEl = document.getElementById('blockTabs');
 const stepTabsEl = document.getElementById('stepTabs');
-const progressDotsEl = document.getElementById('progressDots');
-
-function tinyIonIcon(block){
-  const ionsList = block.steps[0].ions;
-  const uniqueCount = ionsList.length;
-  let dots = '';
-  for(let i=0;i<Math.min(uniqueCount,5);i++){
-    const isCation = ionsList[i].type==='cation';
-    dots += `<circle cx="${6+i*8}" cy="10" r="4" fill="${isCation? 'var(--cathode-soft)':'var(--anode-soft)'}" stroke="${isCation? 'var(--cathode)':'var(--anode)'}" stroke-width="1.2"/>`;
-  }
-  return `<svg width="${8+Math.min(uniqueCount,5)*8}" height="20" viewBox="0 0 ${8+Math.min(uniqueCount,5)*8} 20">${dots}</svg>`;
-}
 
 BLOCKS.forEach((block,i)=>{
   const btn = document.createElement('button');
   btn.className = 'block-tab';
   btn.setAttribute('role','tab');
   btn.setAttribute('aria-selected', i===0? 'true':'false');
-  btn.innerHTML = `${tinyIonIcon(block)}<span>${block.shortName}</span>`;
+  btn.textContent = block.shortName;
   btn.addEventListener('click', ()=>{ state.blockIndex=i; state.stepIndex=0; render(); });
   blockTabsEl.appendChild(btn);
 });
@@ -581,21 +558,6 @@ STEP_LABELS.forEach((label,i)=>{
 });
 
 const TOTAL = BLOCKS.length * 4;
-for(let i=0;i<TOTAL;i++){
-  if(i>0 && i%4===0){
-    const gap = document.createElement('span');
-    gap.className='gap';
-    progressDotsEl.appendChild(gap);
-  }
-  const dot = document.createElement('button');
-  dot.setAttribute('aria-label', `Go to step ${i+1} of ${TOTAL}`);
-  dot.addEventListener('click', ()=>{
-    state.blockIndex = Math.floor(i/4);
-    state.stepIndex = i%4;
-    render();
-  });
-  progressDotsEl.appendChild(dot);
-}
 
 document.getElementById('prevBtn').addEventListener('click', ()=>{
   const combined = state.blockIndex*4+state.stepIndex;
@@ -614,7 +576,6 @@ function render(){
 
   [...blockTabsEl.children].forEach((el,i)=> el.setAttribute('aria-selected', i===state.blockIndex));
   [...stepTabsEl.children].forEach((el,i)=> el.setAttribute('aria-selected', i===state.stepIndex));
-  [...progressDotsEl.querySelectorAll('button')].forEach((el,i)=> el.classList.toggle('active', i===combined));
 
   document.getElementById('scenarioMeta').innerHTML = `<strong>${block.formula}</strong> — ${block.intro}`;
 
