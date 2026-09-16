@@ -1,76 +1,682 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>O-Level Chemistry: Electrolysis Study Buddy</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Electrolysis Study Buddy — Placeholder Template</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2942;
+    --paper:#EEF3F1;
+    --panel:#FFFFFF;
+    --panel-border:rgba(27,41,66,.14);
+    --muted:#57647D;
+    --anode:#C6702E;
+    --anode-soft:#F5DAB6;
+    --anode-tint:rgba(198,112,46,.10);
+    --cathode:#147D74;
+    --cathode-soft:#BFE7E1;
+    --cathode-tint:rgba(20,125,116,.10);
+    --font-display:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    --font-body:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    --font-mono:'Inter',monospace;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--font-body);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  *:focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:2px;}
+
+  .page{max-width:1080px;margin:0 auto;padding:40px 24px 64px;}
+
+  /* ---------- Hero ---------- */
+  .hero{padding:8px 0 32px;border-bottom:1px solid var(--panel-border);margin-bottom:28px;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+  .hero h1{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:clamp(2.2rem,5vw,3.4rem);
+    margin:0 0 8px;
+    letter-spacing:-0.02em;
+  }
+  .hero p{margin:0;max-width:46ch;color:var(--muted);font-size:1.02rem;}
+
+  /* ---------- Block tabs ---------- */
+  .block-tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+  .block-tab{
+    display:flex;align-items:center;gap:10px;
+    background:var(--panel);border:1px solid var(--panel-border);
+    border-radius:10px;padding:10px 16px;
+    font-family:var(--font-body);font-size:.92rem;font-weight:600;color:var(--muted);
+    cursor:pointer;transition:border-color .15s ease,color .15s ease,background .15s ease;
+  }
+  .block-tab:hover{border-color:var(--ink);}
+  .block-tab[aria-selected="true"]{
+    color:var(--ink);border-color:var(--ink);
+    background:linear-gradient(90deg,var(--anode-tint),var(--cathode-tint));
+  }
+  .block-tab svg{display:block;}
+
+  .scenario-meta{color:var(--muted);font-size:.95rem;margin:0 0 26px;}
+  .scenario-meta strong{color:var(--ink);font-weight:600;}
+
+  /* ---------- Step tabs ---------- */
+  .step-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:24px;}
+  .step-tab{
+    background:var(--panel);border:1px solid var(--panel-border);border-radius:10px;
+    padding:10px 12px;text-align:left;cursor:pointer;
+    transition:border-color .15s ease,background .15s ease;
+  }
+  .step-tab:hover{border-color:var(--ink);}
+  .step-tab[aria-selected="true"]{border-color:var(--ink);background:var(--ink);}
+  .step-tab[aria-selected="true"] .step-num{color:var(--paper);opacity:.6;}
+  .step-tab[aria-selected="true"] .step-label{color:var(--paper);}
+  .step-num{display:block;font-family:var(--font-mono);font-size:.72rem;color:var(--muted);margin-bottom:2px;}
+  .step-label{display:block;font-size:.86rem;font-weight:600;color:var(--ink);}
+
+  /* ---------- Content grid ---------- */
+  .content-grid{
+    display:grid;grid-template-columns:1.05fr 1fr;gap:22px;align-items:stretch;
+  }
+  .text-panel,.diagram-panel{
+    background:var(--panel);border:1px solid var(--panel-border);border-radius:14px;
+    padding:26px 28px;
+  }
+  .text-panel{max-width:52ch;}
+  .text-panel h2{
+    font-family:var(--font-display);font-weight:600;font-size:1.5rem;margin:0 0 12px;
+  }
+  .text-panel p{margin:0 0 16px;color:var(--ink);}
+  .step-note{font-size:.9rem;color:var(--muted);font-style:italic;margin:-6px 0 16px;}
+
+  .equation-box{
+    background:var(--paper);border-left:4px solid var(--ink);border-radius:6px;
+    padding:14px 16px;margin:0 0 16px;
+  }
+  .equation-box.mode-anode{border-color:var(--anode);}
+  .equation-box.mode-cathode{border-color:var(--cathode);}
+  .equation-box.mode-overall{border-image:linear-gradient(var(--anode),var(--cathode)) 1;}
+  .equation-label{display:block;font-size:.72rem;color:var(--muted);margin-bottom:6px;}
+  .equation-text{font-family:var(--font-mono);font-weight:600;font-size:1.08rem;letter-spacing:.01em;}
+
+  .ion-chips{list-style:none;margin:0 0 6px;padding:0;display:flex;flex-direction:column;gap:8px;}
+  .ion-chip{
+    display:flex;align-items:center;gap:10px;font-size:.92rem;
+  }
+  .ion-dot{width:16px;height:16px;border-radius:50%;flex-shrink:0;font-size:0;}
+  .ion-dot.cation{background:var(--cathode-soft);border:2px solid var(--cathode);}
+  .ion-dot.anion{background:var(--anode-soft);border:2px solid var(--anode);}
+  .ion-chip b{font-family:var(--font-mono);}
+  .ion-chip span{color:var(--muted);}
+
+  .observations-box{
+    margin-top:4px;border-radius:10px;padding:14px 16px;
+    background:linear-gradient(135deg,var(--anode-tint),var(--cathode-tint));
+    border:1px solid var(--panel-border);
+  }
+  .observations-box h3{margin:0 0 6px;font-size:.85rem;font-weight:600;}
+  .observations-box p{margin:0;font-size:.93rem;color:var(--ink);}
+
+  .diagram-panel{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;}
+  .diagram-frame{width:100%;max-width:320px;aspect-ratio:16/15;}
+  .diagram-frame svg{width:100%;height:100%;display:block;}
+  .diagram-caption{margin:0;text-align:center;font-size:.86rem;color:var(--muted);max-width:32ch;}
+
+  /* ---------- Bottom nav ---------- */
+  .step-nav{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:26px;}
+  .nav-btn{
+    font-family:var(--font-body);font-weight:600;font-size:.92rem;
+    background:var(--ink);color:var(--paper);border:none;border-radius:8px;
+    padding:11px 20px;cursor:pointer;transition:opacity .15s ease,transform .1s ease;
+  }
+  .nav-btn:hover{opacity:.88;}
+  .nav-btn:active{transform:translateY(1px);}
+  .nav-btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--panel-border);}
+
+  .progress-dots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;}
+  .progress-dots button{
+    width:9px;height:9px;border-radius:50%;border:none;padding:0;cursor:pointer;
+    background:var(--panel-border);
+  }
+  .progress-dots button.active{background:var(--ink);}
+  .progress-dots span.gap{width:10px;}
+
+  footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--panel-border);
+    color:var(--muted);font-size:.85rem;}
+
+  /* ---------- Diagram element styling ---------- */
+  .ion-label{font-family:var(--font-mono);font-size:9px;font-weight:600;fill:var(--ink);text-anchor:middle;dominant-baseline:middle;pointer-events:none;}
+  .idle{animation:idleDrift 5s ease-in-out infinite;}
+  .migrate{animation:migrateIon 3.2s ease-in infinite;}
+  .dim{opacity:.35;}
+  .bubble{animation:riseBubble 2.6s ease-out infinite;}
+  .metal-blob{animation:shimmerMetal 2.8s ease-in-out infinite;}
+  .flame{animation:flicker 1.4s ease-in-out infinite;transform-origin:bottom center;}
+  .pulse-ring{animation:pulseRing 1.8s ease-out infinite;transform-origin:center;}
+  .electron{offset-rotate:0deg;animation:flowElectron 2.4s linear infinite;}
+
+  @keyframes idleDrift{
+    0%{transform:translate(0,0);}
+    25%{transform:translate(3px,-4px);}
+    50%{transform:translate(-3px,2px);}
+    75%{transform:translate(2px,4px);}
+    100%{transform:translate(0,0);}
+  }
+  @keyframes migrateIon{
+    0%{transform:translate(0,0);opacity:1;}
+    60%{transform:translate(var(--dx),var(--dy));opacity:1;}
+    82%{transform:translate(var(--dx),var(--dy));opacity:0;}
+    100%{transform:translate(0,0);opacity:0;}
+  }
+  @keyframes riseBubble{
+    0%{transform:translate(0,0);opacity:0;}
+    16%{opacity:1;}
+    88%{opacity:1;}
+    100%{transform:translate(var(--wiggle,4px),var(--rise,-90px));opacity:0;}
+  }
+  @keyframes shimmerMetal{0%,100%{opacity:.82;}50%{opacity:1;}}
+  @keyframes flicker{0%,100%{opacity:.78;transform:scaleY(1);}50%{opacity:1;transform:scaleY(1.14);}}
+  @keyframes pulseRing{0%{transform:scale(.55);opacity:.85;}100%{transform:scale(2.3);opacity:0;}}
+  @keyframes flowElectron{
+    0%{offset-distance:0%;opacity:0;}
+    12%{opacity:1;}
+    88%{opacity:1;}
+    100%{offset-distance:100%;opacity:0;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .idle,.migrate,.bubble,.metal-blob,.flame,.pulse-ring,.electron{
+      animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    }
+  }
+
+  @media (max-width:760px){
+    .content-grid{grid-template-columns:1fr;}
+    .text-panel{max-width:none;order:2;}
+    .diagram-panel{order:1;}
+    .step-tabs{grid-template-columns:repeat(2,1fr);}
+  }
+</style>
 </head>
 <body>
+<div class="page">
 
-  <header class="app-header">
-    <h1>🧪 O-Level Chemistry: Electrolysis Study Buddy</h1>
-    <p>Select an electrolytic cell block and step through the process below.</p>
+  <header class="hero">
+    <div>
+      <h1>[Page Title Placeholder]</h1>
+      <p>[Placeholder: Header subtitle or quick instruction message for students goes here.]</p>
+    </div>
   </header>
 
-  <main class="container">
-    <!-- Block Selector (Tabs) -->
-    <nav class="block-selector">
-      <button class="block-btn active" data-block="molten">
-        1. Molten NaCl
-      </button>
-      <button class="block-btn" data-block="dilute">
-        2. Dilute Aqueous NaCl
-      </button>
-      <button class="block-btn" data-block="concentrated">
-        3. Concentrated Aqueous NaCl
-      </button>
-    </nav>
+  <nav class="block-tabs" role="tablist" aria-label="Choose a scenario" id="blockTabs"></nav>
+  <p class="scenario-meta" id="scenarioMeta"></p>
 
-    <!-- Main Study Card -->
-    <section class="study-card">
-      <h2 id="block-title">Electrolysis of Molten Sodium Chloride</h2>
+  <nav class="step-tabs" role="tablist" aria-label="Choose a step" id="stepTabs"></nav>
 
-      <!-- Step Selector Buttons -->
-      <div class="step-nav">
-        <button class="step-btn active" data-step="1">Step 1: Ions Present</button>
-        <button class="step-btn" data-step="2">Step 2: Anode (+)</button>
-        <button class="step-btn" data-step="3">Step 3: Cathode (-)</button>
-        <button class="step-btn" data-step="4">Step 4: Overall & Observations</button>
+  <main class="content-grid">
+    <section class="text-panel" aria-live="polite">
+      <h2 id="stepTitle"></h2>
+      <p id="stepBody"></p>
+
+      <ul class="ion-chips" id="ionChips" hidden></ul>
+
+      <div class="equation-box" id="equationBox" hidden>
+        <span class="equation-label" id="equationLabel">Half-equation</span>
+        <span class="equation-text" id="equationText"></span>
       </div>
+      <p class="step-note" id="stepNote" hidden></p>
 
-      <!-- Content Split View: Left (Text) | Right (Graphic/Animation) -->
-      <div class="content-split">
-        <!-- Text Box -->
-        <article class="text-panel">
-          <h3 id="step-heading">Step 1: Ions Present in Solution</h3>
-          <div id="step-content" class="text-body">
-            <!-- Text dynamically inserted via JS -->
-          </div>
-        </article>
-
-        <!-- Graphic / Animation Area -->
-        <div class="graphic-panel">
-          <div class="animation-container" id="animation-box">
-            <!-- Animation graphics dynamic container -->
-            <div class="beaker">
-              <div class="electrode anode" id="anode-label">Anode (+)</div>
-              <div class="electrode cathode" id="cathode-label">Cathode (-)</div>
-              <div class="electrolyte-liquid" id="liquid">
-                <!-- Ion particles will be animated here -->
-                <div class="ion cation" id="cation-particle">Na⁺</div>
-                <div class="ion anion" id="anion-particle">Cl⁻</div>
-              </div>
-            </div>
-            <p class="graphic-caption" id="animation-caption">
-              [Animation Placeholder: Ions in electrolyte]
-            </p>
-          </div>
-        </div>
+      <div class="observations-box" id="observationsBox" hidden>
+        <h3>[Observations Header Placeholder]</h3>
+        <p id="observationsText"></p>
       </div>
+    </section>
+
+    <section class="diagram-panel">
+      <div class="diagram-frame" id="diagramFrame"></div>
+      <p class="diagram-caption" id="diagramCaption"></p>
     </section>
   </main>
 
-  <script src="script.js"></script>
+  <div class="step-nav">
+    <button class="nav-btn ghost" id="prevBtn">← Previous</button>
+    <div class="progress-dots" id="progressDots"></div>
+    <button class="nav-btn" id="nextBtn">Next →</button>
+  </div>
+
+  <footer>
+    [Placeholder: Footer information, copyright, or syllabus topic references]
+  </footer>
+</div>
+
+<script>
+/* ============================= DATA ============================= */
+// Modify the text content in BLOCKS below to update your study buddy page!
+const BLOCKS = [
+  {
+    id: 'molten',
+    shortName: 'Block 1 Title',
+    formula: '[Formula 1]',
+    state: 'molten', // 'molten' shows heat flames; 'aqueous' shows liquid level
+    intro: '[Placeholder: Brief intro description for Block 1]',
+    steps: [
+      {
+        title: 'Step 1: Ions Present',
+        body: '[Placeholder: Add explanation of ions present for Block 1 here.]',
+        ions: [
+          { symbol: 'Na⁺', type: 'cation', desc: '[Placeholder: Cation behavior]' },
+          { symbol: 'Cl⁻', type: 'anion', desc: '[Placeholder: Anion behavior]' }
+        ],
+        mode: 'ions'
+      },
+      {
+        title: 'Step 2: Reaction at Anode',
+        body: '[Placeholder: Add anode reaction explanation for Block 1.]',
+        equation: '[Placeholder: Anode Half-Equation 1]',
+        note: '[Placeholder: Note / Tip for anode reaction]',
+        mode: 'anode',
+        product: { formula: 'Cl₂', kind: 'gas', trueColor: '#D9E36B' }
+      },
+      {
+        title: 'Step 3: Reaction at Cathode',
+        body: '[Placeholder: Add cathode reaction explanation for Block 1.]',
+        equation: '[Placeholder: Cathode Half-Equation 1]',
+        note: '[Placeholder: Note / Tip for cathode reaction]',
+        mode: 'cathode',
+        product: { formula: 'Na', kind: 'metal', trueColor: '#C9D2D8' }
+      },
+      {
+        title: 'Step 4: Overall & Observations',
+        body: '[Placeholder: Add summary explanation of the overall process.]',
+        equation: '[Placeholder: Overall Reaction Equation 1]',
+        observations: '[Placeholder: Describe the visual observations at both electrodes.]',
+        mode: 'overall',
+        productAnode: { formula: 'Cl₂', kind: 'gas', trueColor: '#D9E36B' },
+        productCathode: { formula: 'Na', kind: 'metal', trueColor: '#C9D2D8' }
+      }
+    ]
+  },
+  {
+    id: 'dilute',
+    shortName: 'Block 2 Title',
+    formula: '[Formula 2]',
+    state: 'aqueous',
+    intro: '[Placeholder: Brief intro description for Block 2]',
+    steps: [
+      {
+        title: 'Step 1: Ions Present',
+        body: '[Placeholder: Add explanation of ions present for Block 2 here.]',
+        ions: [
+          { symbol: 'Na⁺', type: 'cation', desc: '[Placeholder: Cation 1]' },
+          { symbol: 'Cl⁻', type: 'anion', desc: '[Placeholder: Anion 1]' },
+          { symbol: 'H⁺', type: 'cation', desc: '[Placeholder: Cation 2]' },
+          { symbol: 'OH⁻', type: 'anion', desc: '[Placeholder: Anion 2]' }
+        ],
+        mode: 'ions'
+      },
+      {
+        title: 'Step 2: Reaction at Anode',
+        body: '[Placeholder: Add anode reaction explanation for Block 2.]',
+        equation: '[Placeholder: Anode Half-Equation 2]',
+        note: '[Placeholder: Note / Tip for selective discharge at anode]',
+        mode: 'anode',
+        product: { formula: 'O₂', kind: 'gas', trueColor: 'transparent' }
+      },
+      {
+        title: 'Step 3: Reaction at Cathode',
+        body: '[Placeholder: Add cathode reaction explanation for Block 2.]',
+        equation: '[Placeholder: Cathode Half-Equation 2]',
+        note: '[Placeholder: Note / Tip for selective discharge at cathode]',
+        mode: 'cathode',
+        product: { formula: 'H₂', kind: 'gas', trueColor: 'transparent' }
+      },
+      {
+        title: 'Step 4: Overall & Observations',
+        body: '[Placeholder: Add summary explanation of overall process 2.]',
+        equation: '[Placeholder: Overall Reaction Equation 2]',
+        observations: '[Placeholder: Describe key visual observations for Block 2.]',
+        mode: 'overall',
+        productAnode: { formula: 'O₂', kind: 'gas', trueColor: 'transparent' },
+        productCathode: { formula: 'H₂', kind: 'gas', trueColor: 'transparent' }
+      }
+    ]
+  },
+  {
+    id: 'concentrated',
+    shortName: 'Block 3 Title',
+    formula: '[Formula 3]',
+    state: 'aqueous',
+    intro: '[Placeholder: Brief intro description for Block 3]',
+    steps: [
+      {
+        title: 'Step 1: Ions Present',
+        body: '[Placeholder: Add explanation of ions present for Block 3 here.]',
+        ions: [
+          { symbol: 'Na⁺', type: 'cation', desc: '[Placeholder: Cation 1]' },
+          { symbol: 'Cl⁻', type: 'anion', desc: '[Placeholder: Anion 1 - Concentrated]' },
+          { symbol: 'H⁺', type: 'cation', desc: '[Placeholder: Cation 2]' },
+          { symbol: 'OH⁻', type: 'anion', desc: '[Placeholder: Anion 2]' }
+        ],
+        mode: 'ions'
+      },
+      {
+        title: 'Step 2: Reaction at Anode',
+        body: '[Placeholder: Add anode reaction explanation for Block 3.]',
+        equation: '[Placeholder: Anode Half-Equation 3]',
+        note: '[Placeholder: Concentration effect note]',
+        mode: 'anode',
+        product: { formula: 'Cl₂', kind: 'gas', trueColor: '#D9E36B' }
+      },
+      {
+        title: 'Step 3: Reaction at Cathode',
+        body: '[Placeholder: Add cathode reaction explanation for Block 3.]',
+        equation: '[Placeholder: Cathode Half-Equation 3]',
+        note: '[Placeholder: Cathode selective discharge note]',
+        mode: 'cathode',
+        product: { formula: 'H₂', kind: 'gas', trueColor: 'transparent' }
+      },
+      {
+        title: 'Step 4: Overall & Observations',
+        body: '[Placeholder: Add summary explanation of overall process 3.]',
+        equation: '[Placeholder: Overall Reaction Equation 3]',
+        observations: '[Placeholder: Describe key visual observations for Block 3.]',
+        mode: 'overall',
+        productAnode: { formula: 'Cl₂', kind: 'gas', trueColor: '#D9E36B' },
+        productCathode: { formula: 'H₂', kind: 'gas', trueColor: 'transparent' }
+      }
+    ]
+  }
+];
+
+const STEP_LABELS = ['Step 1: Ions', 'Step 2: Anode', 'Step 3: Cathode', 'Step 4: Overall'];
+
+/* ============================ STATE ============================ */
+const state = { blockIndex: 0, stepIndex: 0 };
+
+/* ======================= DIAGRAM GEOMETRY ======================= */
+const ANODE_X = 100, CATHODE_X = 220, ROD_TOP = 55, ROD_TIP = 225;
+const SLOTS = [
+  [100,135],[160,122],[220,135],[85,175],
+  [235,175],[112,222],[160,205],[208,222]
+];
+
+function vesselMarkup(state_){
+  if(state_==='molten'){
+    return `
+      <path d="M60,108 L260,108 L215,250 L105,250 Z" fill="url(#moltenGlow)" stroke="none"/>
+      <path d="M60,108 L260,108 L215,250 L105,250 Z" fill="none" stroke="#3A3A3A" stroke-width="3" stroke-linejoin="round"/>
+      <g>
+        <path class="flame" d="M148,258 q-8,-14 0,-24 q8,10 0,24 Z" fill="#D9772F" style="animation-delay:0s"/>
+        <path class="flame" d="M168,260 q-9,-18 0,-30 q9,12 0,30 Z" fill="#E68A2E" style="animation-delay:.3s"/>
+        <path class="flame" d="M188,258 q-8,-14 0,-24 q8,10 0,24 Z" fill="#D9772F" style="animation-delay:.6s"/>
+      </g>`;
+  }
+  return `
+    <path d="M65,128 L65,225 Q65,255 95,255 L225,255 Q255,255 255,225 L255,128 Z" fill="#8FC4DE" opacity=".38" stroke="none"/>
+    <path d="M65,90 L65,225 Q65,255 95,255 L225,255 Q255,255 255,225 L255,90" fill="none" stroke="#3A3A3A" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="70" y1="128" x2="250" y2="128" stroke="#6FA8C9" stroke-width="1.5" stroke-dasharray="3 3"/>`;
+}
+
+function rodsAndWiresMarkup(activeAnode, activeCathode){
+  return `
+    <rect x="${ANODE_X-4}" y="${ROD_TOP}" width="8" height="${ROD_TIP-ROD_TOP}" fill="#3A3A3A" rx="2"/>
+    <rect x="${CATHODE_X-4}" y="${ROD_TOP}" width="8" height="${ROD_TIP-ROD_TOP}" fill="#3A3A3A" rx="2"/>
+
+    <path d="M${ANODE_X},${ROD_TOP} L${ANODE_X},30 L150,30" fill="none" stroke="#8A93A6" stroke-width="2"/>
+    <path d="M170,30 L${CATHODE_X},30 L${CATHODE_X},${ROD_TOP}" fill="none" stroke="#8A93A6" stroke-width="2"/>
+    <rect x="149" y="22" width="3" height="16" fill="#1B2942"/>
+    <rect x="168" y="26" width="5" height="8" fill="#1B2942"/>
+    <text x="160" y="16" class="ion-label" font-size="9" fill="#57647D">DC supply</text>
+
+    <circle cx="${ANODE_X}" cy="${ROD_TOP}" r="7" fill="${activeAnode? 'var(--anode)':'#D8DEE8'}" stroke="#fff" stroke-width="1.5"/>
+    <text x="${ANODE_X}" y="${ROD_TOP+3}" class="ion-label" font-size="10" fill="#fff">+</text>
+    <text x="${ANODE_X}" y="${ROD_TOP-14}" class="ion-label" fill="var(--anode)">anode</text>
+
+    <circle cx="${CATHODE_X}" cy="${ROD_TOP}" r="7" fill="${activeCathode? 'var(--cathode)':'#D8DEE8'}" stroke="#fff" stroke-width="1.5"/>
+    <text x="${CATHODE_X}" y="${ROD_TOP+3}" class="ion-label" font-size="10" fill="#fff">–</text>
+    <text x="${CATHODE_X}" y="${ROD_TOP-14}" class="ion-label" fill="var(--cathode)">cathode</text>
+
+    ${activeAnode? `<circle class="pulse-ring" cx="${ANODE_X}" cy="${ROD_TOP}" r="7" fill="none" stroke="var(--anode)" stroke-width="2"/>` : ''}
+    ${activeCathode? `<circle class="pulse-ring" cx="${CATHODE_X}" cy="${ROD_TOP}" r="7" fill="none" stroke="var(--cathode)" stroke-width="2"/>` : ''}
+
+    ${activeAnode? `<circle r="3.5" fill="var(--anode)" class="electron" style="offset-path:path('M${ANODE_X},${ROD_TOP} L${ANODE_X},30 L150,30');"/>` : ''}
+    ${activeCathode? `<circle r="3.5" fill="var(--cathode)" class="electron" style="offset-path:path('M170,30 L${CATHODE_X},30 L${CATHODE_X},${ROD_TOP}');"/>` : ''}
+  `;
+}
+
+function ionsMarkup(block, stepMode){
+  const ionsList = block.steps[0].ions;
+  return SLOTS.map((slot,i)=>{
+    const ion = ionsList[i % ionsList.length];
+    const [sx,sy] = slot;
+    const isCation = ion.type==='cation';
+    const tip = isCation? [CATHODE_X, ROD_TIP-5] : [ANODE_X, ROD_TIP-5];
+    const dx = (tip[0]-sx)*0.88, dy=(tip[1]-sy)*0.88;
+    let cls = 'idle', style = `animation-delay:${(i*0.35).toFixed(2)}s;animation-duration:${4+ (i%3)}s;`;
+    let dim = false;
+
+    if(stepMode==='anode'){ if(!isCation){ cls='migrate'; style=`--dx:${dx}px;--dy:${dy}px;animation-delay:${(i*0.4).toFixed(2)}s;`; } else dim=true; }
+    else if(stepMode==='cathode'){ if(isCation){ cls='migrate'; style=`--dx:${dx}px;--dy:${dy}px;animation-delay:${(i*0.4).toFixed(2)}s;`; } else dim=true; }
+    else if(stepMode==='overall'){ cls='migrate'; style=`--dx:${dx}px;--dy:${dy}px;animation-delay:${(i*0.4).toFixed(2)}s;`; }
+
+    const fill = isCation? 'var(--cathode-soft)':'var(--anode-soft)';
+    const stroke = isCation? 'var(--cathode)':'var(--anode)';
+    return `<g class="${cls}${dim? ' dim':''}" style="${style}">
+      <circle cx="${sx}" cy="${sy}" r="12" fill="${fill}" stroke="${stroke}" stroke-width="1.75"/>
+      <text x="${sx}" y="${sy+1}" class="ion-label" font-size="8.5">${ion.symbol}</text>
+    </g>`;
+  }).join('');
+}
+
+function bubbleGroup(x,y,product,count,delayBase){
+  if(!product) return '';
+  const colourless = product.trueColor==='transparent';
+  const fill = colourless? 'rgba(255,255,255,.25)' : product.trueColor;
+  const stroke = colourless? '#7FA9C7' : 'none';
+  let out='';
+  for(let i=0;i<count;i++){
+    const rx = x + (i-1)*7;
+    out += `<circle class="bubble" cx="${rx}" cy="${y}" r="${4+ (i%2)}" fill="${fill}" stroke="${stroke}" stroke-width="1"
+      style="--rise:-${80+i*10}px;--wiggle:${i%2? 6:-6}px;animation-delay:${(delayBase+i*0.5).toFixed(2)}s;"/>`;
+  }
+  return out;
+}
+
+function metalBlob(x,y, formula){
+  return `<ellipse class="metal-blob" cx="${x}" cy="${y+2}" rx="13" ry="6" fill="#C9D2D8" stroke="#9AA6B2" stroke-width="1"/>
+    <text x="${x}" y="${y+5}" class="ion-label" font-size="8">${formula}</text>`;
+}
+
+function productLabel(x,y,formula){
+  return `<text x="${x}" y="${y}" class="ion-label" font-size="10" font-weight="700">${formula}</text>`;
+}
+
+function diagramSVG(block, stepIdx){
+  const step = block.steps[stepIdx];
+  const mode = step.mode;
+  const activeAnode = mode==='anode' || mode==='overall';
+  const activeCathode = mode==='cathode' || mode==='overall';
+
+  let productsMarkup = '';
+  if(mode==='anode'){
+    productsMarkup += bubbleGroup(ANODE_X, ROD_TIP-8, step.product, 3, 0);
+    productsMarkup += productLabel(ANODE_X, ROD_TIP+22, step.product.formula);
+  } else if(mode==='cathode'){
+    if(step.product.kind==='metal'){
+      productsMarkup += metalBlob(CATHODE_X, ROD_TIP-6, step.product.formula);
+    } else {
+      productsMarkup += bubbleGroup(CATHODE_X, ROD_TIP-8, step.product, 3, 0.3);
+      productsMarkup += productLabel(CATHODE_X, ROD_TIP+22, step.product.formula);
+    }
+  } else if(mode==='overall'){
+    productsMarkup += bubbleGroup(ANODE_X, ROD_TIP-8, step.productAnode, 3, 0);
+    productsMarkup += productLabel(ANODE_X, ROD_TIP+22, step.productAnode.formula);
+    if(step.productCathode.kind==='metal'){
+      productsMarkup += metalBlob(CATHODE_X, ROD_TIP-6, step.productCathode.formula);
+    } else {
+      productsMarkup += bubbleGroup(CATHODE_X, ROD_TIP-8, step.productCathode, 3, 0.3);
+      productsMarkup += productLabel(CATHODE_X, ROD_TIP+22, step.productCathode.formula);
+    }
+  }
+
+  return `
+  <svg viewBox="0 0 320 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${step.title} diagram">
+    <defs>
+      <radialGradient id="moltenGlow" cx="50%" cy="35%" r="75%">
+        <stop offset="0%" stop-color="#FBC98A"/>
+        <stop offset="100%" stop-color="#E8862F"/>
+      </radialGradient>
+    </defs>
+    ${vesselMarkup(block.state)}
+    ${ionsMarkup(block, mode)}
+    ${rodsAndWiresMarkup(activeAnode, activeCathode)}
+    ${productsMarkup}
+  </svg>`;
+}
+
+/* ============================= UI BUILD ============================= */
+const blockTabsEl = document.getElementById('blockTabs');
+const stepTabsEl = document.getElementById('stepTabs');
+const progressDotsEl = document.getElementById('progressDots');
+
+function tinyIonIcon(block){
+  const ionsList = block.steps[0].ions;
+  const uniqueCount = ionsList.length;
+  let dots = '';
+  for(let i=0;i<Math.min(uniqueCount,5);i++){
+    const isCation = ionsList[i].type==='cation';
+    dots += `<circle cx="${6+i*8}" cy="10" r="4" fill="${isCation? 'var(--cathode-soft)':'var(--anode-soft)'}" stroke="${isCation? 'var(--cathode)':'var(--anode)'}" stroke-width="1.2"/>`;
+  }
+  return `<svg width="${8+Math.min(uniqueCount,5)*8}" height="20" viewBox="0 0 ${8+Math.min(uniqueCount,5)*8} 20">${dots}</svg>`;
+}
+
+BLOCKS.forEach((block,i)=>{
+  const btn = document.createElement('button');
+  btn.className = 'block-tab';
+  btn.setAttribute('role','tab');
+  btn.setAttribute('aria-selected', i===0? 'true':'false');
+  btn.innerHTML = `${tinyIonIcon(block)}<span>${block.shortName}</span>`;
+  btn.addEventListener('click', ()=>{ state.blockIndex=i; state.stepIndex=0; render(); });
+  blockTabsEl.appendChild(btn);
+});
+
+STEP_LABELS.forEach((label,i)=>{
+  const btn = document.createElement('button');
+  btn.className = 'step-tab';
+  btn.setAttribute('role','tab');
+  btn.setAttribute('aria-selected', i===0? 'true':'false');
+  btn.innerHTML = `<span class="step-num">Step ${i+1}</span><span class="step-label">${label}</span>`;
+  btn.addEventListener('click', ()=>{ state.stepIndex=i; render(); });
+  stepTabsEl.appendChild(btn);
+});
+
+const TOTAL = BLOCKS.length * 4;
+for(let i=0;i<TOTAL;i++){
+  if(i>0 && i%4===0){
+    const gap = document.createElement('span');
+    gap.className='gap';
+    progressDotsEl.appendChild(gap);
+  }
+  const dot = document.createElement('button');
+  dot.setAttribute('aria-label', `Go to step ${i+1} of ${TOTAL}`);
+  dot.addEventListener('click', ()=>{
+    state.blockIndex = Math.floor(i/4);
+    state.stepIndex = i%4;
+    render();
+  });
+  progressDotsEl.appendChild(dot);
+}
+
+document.getElementById('prevBtn').addEventListener('click', ()=>{
+  const combined = state.blockIndex*4+state.stepIndex;
+  if(combined>0){ const n=combined-1; state.blockIndex=Math.floor(n/4); state.stepIndex=n%4; render(); }
+});
+document.getElementById('nextBtn').addEventListener('click', ()=>{
+  const combined = state.blockIndex*4+state.stepIndex;
+  if(combined<TOTAL-1){ const n=combined+1; state.blockIndex=Math.floor(n/4); state.stepIndex=n%4; render(); }
+});
+
+/* ============================= RENDER ============================= */
+function render(){
+  const block = BLOCKS[state.blockIndex];
+  const step = block.steps[state.stepIndex];
+  const combined = state.blockIndex*4+state.stepIndex;
+
+  [...blockTabsEl.children].forEach((el,i)=> el.setAttribute('aria-selected', i===state.blockIndex));
+  [...stepTabsEl.children].forEach((el,i)=> el.setAttribute('aria-selected', i===state.stepIndex));
+  [...progressDotsEl.querySelectorAll('button')].forEach((el,i)=> el.classList.toggle('active', i===combined));
+
+  document.getElementById('scenarioMeta').innerHTML = `<strong>${block.formula}</strong> — ${block.intro}`;
+
+  document.getElementById('stepTitle').textContent = step.title;
+  document.getElementById('stepBody').textContent = step.body;
+
+  const ionChips = document.getElementById('ionChips');
+  const equationBox = document.getElementById('equationBox');
+  const stepNote = document.getElementById('stepNote');
+  const observationsBox = document.getElementById('observationsBox');
+
+  if(step.mode==='ions'){
+    ionChips.hidden = false;
+    const unique = [];
+    step.ions.forEach(ion=>{ if(!unique.find(u=>u.symbol===ion.symbol)) unique.push(ion); });
+    ionChips.innerHTML = unique.map(ion=>`
+      <li class="ion-chip">
+        <span class="ion-dot ${ion.type}">·</span>
+        <b>${ion.symbol}</b><span>— ${ion.desc}</span>
+      </li>`).join('');
+  } else {
+    ionChips.hidden = true;
+  }
+
+  if(step.equation){
+    equationBox.hidden = false;
+    equationBox.className = 'equation-box mode-' + step.mode;
+    document.getElementById('equationLabel').textContent = step.mode==='overall' ? 'Overall equation' : 'Half-equation';
+    document.getElementById('equationText').textContent = step.equation;
+  } else {
+    equationBox.hidden = true;
+  }
+
+  if(step.note){
+    stepNote.hidden = false;
+    stepNote.textContent = step.note;
+  } else {
+    stepNote.hidden = true;
+  }
+
+  if(step.observations){
+    observationsBox.hidden = false;
+    document.getElementById('observationsText').textContent = step.observations;
+  } else {
+    observationsBox.hidden = true;
+  }
+
+  document.getElementById('diagramFrame').innerHTML = diagramSVG(block, state.stepIndex);
+
+  const captions = [
+    '[Caption Step 1: Animation showing random ion drift]',
+    '[Caption Step 2: Animation showing anion migration to positive anode]',
+    '[Caption Step 3: Animation showing cation migration to negative cathode]',
+    '[Caption Step 4: Animation showing complete electrolysis reaction]'
+  ];
+  document.getElementById('diagramCaption').textContent = captions[state.stepIndex];
+
+  document.getElementById('prevBtn').disabled = combined===0;
+  document.getElementById('nextBtn').disabled = combined===TOTAL-1;
+}
+
+render();
+</script>
 </body>
 </html>
